@@ -1,25 +1,49 @@
 const { Router } = require("express");
-// const createError = require("http-errors");
-// const User = require("../lib/models/user.model");
-// const auth = require("../middlewares/auth.mid");
+const createError = require("http-errors");
+const User = require("../lib/models/user.model");
+const auth = require("../middlewares/auth.mid");
 
 const router = Router();
 
-// TODO Iteracion 3: POST /users — registrar nuevo usuario
-//   - Comprueba si ya existe un usuario con el mismo username → 409
-//   - Si no, crea el usuario → 201
+router.post("/users", async (req, res, next) => {
+  try {
+    const exists = await User.findOne({ username: req.body.username });
+    if (exists) return next(createError(409, "Username already taken"));
+    const user = await User.create(req.body);
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+});
 
-// TODO Iteracion 3: POST /sessions — iniciar sesion
-//   - Busca el usuario por email
-//   - Verifica la password con user.checkPassword(password)
-//   - Si las credenciales son incorrectas → 401
-//   - Si son correctas, guarda req.session.userId = user._id → 200
+router.post("/sessions", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !(await user.checkPassword(password))) {
+      return next(createError(401, "Invalid credentials"));
+    }
+    req.session.userId = user._id;
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+});
 
-// TODO Iteracion 3: DELETE /sessions — cerrar sesion (requiere auth)
-//   - Destruye la sesion con req.session.destroy() → 204
+router.delete("/sessions", auth, (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) return next(err);
+    res.sendStatus(204);
+  });
+});
 
-// TODO Iteracion 3: GET /users/me — perfil del usuario autenticado (requiere auth)
-//   - Declara esta ruta ANTES de cualquier ruta con /:id
-//   - Busca el usuario por req.user._id con populate("posts") → 200
+router.get("/users/me", auth, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).populate("posts");
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
