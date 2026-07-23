@@ -1,26 +1,58 @@
-// const createError = require("http-errors");
-// const User = require("../lib/models/user.model");
-
-// TODO Iteracion 3: Implementar cada funcion y exportarlas al final del archivo
+const createError = require("http-errors");
+const User = require("../lib/models/user.model");
 
 const create = async (req, res, next) => {
-  // TODO: Comprobar si ya existe un usuario con el mismo username → 409
-  // TODO: Si no existe, crear el usuario → 201
+  try {
+    const existing = await User.findOne({ username: req.body.username });
+    if (existing) {
+      return next(createError(409, "username already exists"));
+    }
+
+    const user = await User.create(req.body);
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const login = async (req, res, next) => {
-  // TODO: Buscar el usuario por email
-  // TODO: Verificar la password con user.checkPassword(password)
-  // TODO: Si las credenciales son incorrectas → 401
-  // TODO: Si son correctas, guardar req.session.userId = user._id → 200
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return next(createError(401, "invalid credentials"));
+    }
+
+    const valid = await user.checkPassword(req.body.password);
+    if (!valid) {
+      return next(createError(401, "invalid credentials"));
+    }
+
+    req.session.userId = user._id;
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const logout = (req, res, next) => {
-  // TODO: Destruir la sesion con req.session.destroy() → 204
+  req.session.destroy((error) => {
+    if (error) {
+      return next(error);
+    }
+    res.status(204).send();
+  });
 };
 
 const profile = async (req, res, next) => {
-  // TODO: Buscar el usuario por req.user._id con .populate("posts") → 200
+  try {
+    const user = await User.findById(req.user._id).populate("posts");
+    if (!user) {
+      return next(createError(401, "session user not found"));
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = { create, login, logout, profile };

@@ -1,30 +1,76 @@
-// const createError = require("http-errors");
-// const Post = require("../lib/models/post.model");
-
-// TODO Iteracion 4: Implementar cada funcion y exportarlas al final del archivo
+const createError = require("http-errors");
+const Post = require("../lib/models/post.model");
 
 const list = async (req, res, next) => {
-  // TODO: Devolver todos los posts con author populado → 200
+  try {
+    const posts = await Post.find().populate("author");
+    res.status(200).json(posts);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const create = async (req, res, next) => {
-  // TODO: Crear post (author = req.user._id, no viene del body)
-  // TODO: Poblar author en la respuesta → 201
+  try {
+    const post = await Post.create({
+      title: req.body.title,
+      body: req.body.body,
+      author: req.user._id,
+    });
+    await post.populate("author");
+    res.status(201).json(post);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const detail = async (req, res, next) => {
-  // TODO: Devolver post con author y virtual "comments" populados (populate anidado para author de cada comment)
-  // TODO: Si no existe → 404
+  try {
+    const post = await Post.findById(req.params.id)
+      .populate("author")
+      .populate({
+        path: "comments",
+        populate: { path: "author" },
+      });
+
+    if (!post) {
+      return next(createError(404, "Post not found"));
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const update = async (req, res, next) => {
-  // TODO: Actualizar con findByIdAndUpdate({ runValidators: true, returnDocument: "after" })
-  // TODO: Si no existe → 404
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { title: req.body.title, body: req.body.body },
+      { runValidators: true, returnDocument: "after" },
+    );
+
+    if (!post) {
+      return next(createError(404, "Post not found"));
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const remove = async (req, res, next) => {
-  // TODO: Eliminar post con findByIdAndDelete
-  // TODO: Si no existe → 404, si existe → 204
+  try {
+    const post = await Post.findByIdAndDelete(req.params.id);
+    if (!post) {
+      return next(createError(404, "Post not found"));
+    }
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = { list, create, detail, update, remove };
