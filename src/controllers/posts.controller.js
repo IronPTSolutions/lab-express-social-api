@@ -1,20 +1,16 @@
-const { Router } = require("express");
 const createError = require("http-errors");
 const Post = require("../lib/models/post.model");
-const auth = require("../middlewares/auth.mid");
 
-const router = Router();
-
-router.get("/posts", auth, async (req, res, next) => {
+const list = async (req, res, next) => {
   try {
     const posts = await Post.find().populate("author");
     res.json(posts);
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post("/posts", auth, async (req, res, next) => {
+const create = async (req, res, next) => {
   try {
     const post = await Post.create({ ...req.body, author: req.user._id });
     await post.populate("author");
@@ -22,9 +18,9 @@ router.post("/posts", auth, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.get("/posts/:id", auth, async (req, res, next) => {
+const detail = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate("author")
@@ -34,9 +30,9 @@ router.get("/posts/:id", auth, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.patch("/posts/:id", auth, async (req, res, next) => {
+const update = async (req, res, next) => {
   try {
     const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
       runValidators: true,
@@ -47,9 +43,9 @@ router.patch("/posts/:id", auth, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.delete("/posts/:id", auth, async (req, res, next) => {
+const remove = async (req, res, next) => {
   try {
     const post = await Post.findByIdAndDelete(req.params.id);
     if (!post) return next(createError(404, "Post not found"));
@@ -57,6 +53,6 @@ router.delete("/posts/:id", auth, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-module.exports = router;
+module.exports = { list, create, detail, update, remove };

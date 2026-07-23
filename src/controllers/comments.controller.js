@@ -1,11 +1,7 @@
-const { Router } = require("express");
 const createError = require("http-errors");
 const Comment = require("../lib/models/comment.model");
-const auth = require("../middlewares/auth.mid");
 
-const router = Router();
-
-router.post("/posts/:id/comments", auth, async (req, res, next) => {
+const create = async (req, res, next) => {
   try {
     const comment = await Comment.create({
       ...req.body,
@@ -16,9 +12,9 @@ router.post("/posts/:id/comments", auth, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.delete("/posts/:id/comments/:commentId", auth, async (req, res, next) => {
+const remove = async (req, res, next) => {
   try {
     const comment = await Comment.findByIdAndDelete(req.params.commentId);
     if (!comment) return next(createError(404, "Comment not found"));
@@ -26,6 +22,6 @@ router.delete("/posts/:id/comments/:commentId", auth, async (req, res, next) => 
   } catch (error) {
     next(error);
   }
-});
+};
 
-module.exports = router;
+module.exports = { create, remove };

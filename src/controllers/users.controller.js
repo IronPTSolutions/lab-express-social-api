@@ -1,11 +1,7 @@
-const { Router } = require("express");
 const createError = require("http-errors");
 const User = require("../lib/models/user.model");
-const auth = require("../middlewares/auth.mid");
 
-const router = Router();
-
-router.post("/users", async (req, res, next) => {
+const create = async (req, res, next) => {
   try {
     const exists = await User.findOne({ username: req.body.username });
     if (exists) return next(createError(409, "Username already taken"));
@@ -14,9 +10,9 @@ router.post("/users", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.post("/sessions", async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -28,22 +24,22 @@ router.post("/sessions", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.delete("/sessions", auth, (req, res, next) => {
+const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) return next(err);
     res.sendStatus(204);
   });
-});
+};
 
-router.get("/users/me", auth, async (req, res, next) => {
+const profile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).populate("posts");
     res.json(user);
   } catch (error) {
     next(error);
   }
-});
+};
 
-module.exports = router;
+module.exports = { create, login, logout, profile };
