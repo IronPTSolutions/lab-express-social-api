@@ -42,6 +42,24 @@ npm test
 
 Verás que todos los tests fallan. Tu objetivo es hacerlos pasar iteración a iteración.
 
+## Colección Postman
+
+El proyecto incluye una colección Postman en `docs/api.postman_collection.json` con todas las peticiones del API organizadas por recurso (Users & Sessions, Posts, Comments).
+
+**Cómo importarla:**
+
+1. Abre Postman y haz clic en **Import**.
+2. Selecciona el archivo `docs/api.postman_collection.json`.
+3. La colección aparecerá con una variable `baseUrl` apuntando a `http://localhost:3000`.
+
+**Flujo de uso:**
+
+1. Arranca el servidor con `npm run dev`.
+2. Ejecuta **Registrar usuario** para crear tu cuenta.
+3. Ejecuta **Iniciar sesión** — Postman guarda la cookie de sesión automáticamente.
+4. Ya puedes usar el resto de peticiones sin configurar nada más.
+5. Después de crear un post, copia el campo `id` de la respuesta y pégalo en la variable `postId` de la colección para usar las peticiones de detalle, actualización y comentarios.
+
 ## Entrega
 
 Cuando hayas terminado, sube tu código a GitHub y entrega el enlace a tu repositorio.
