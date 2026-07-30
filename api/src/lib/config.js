@@ -30,6 +30,14 @@ const config = convict({
       env: "MONGODB_URI",
     },
   },
+  cors: {
+    origin: {
+      doc: "Allowed CORS origin",
+      format: String,
+      default: "http://localhost:5173",
+      env: "CORS_ORIGIN",
+    },
+  },
   session: {
     secret: {
       doc: "Session signing secret",
