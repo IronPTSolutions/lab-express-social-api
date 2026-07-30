@@ -1,6 +1,6 @@
-import { Routes, Route } from 'react-router';
-import { PrivateRoute } from './guards';
-import { Navbar } from './components/ui';
+import { Routes, Route } from "react-router";
+import { PrivateRoute } from "./guards";
+import { Navbar } from "./components/ui";
 import {
   LoginPage,
   SignupPage,
@@ -8,7 +8,7 @@ import {
   PostDetailPage,
   PostEditPage,
   ProfilePage,
-} from './pages';
+} from "./pages";
 
 function App() {
   return (

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router';
-import useAuth from '../contexts/auth-context';
-import { PageLayout } from '../components/layouts';
-import { CommentForm, CommentItem } from '../components/comments';
-import * as api from '../services/api-service';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router";
+import useAuth from "../contexts/auth-context";
+import { PageLayout } from "../components/layouts";
+import { CommentForm, CommentItem } from "../components/comments";
+import * as api from "../services/api-service";
 
 function PostDetailPage() {
   const { id } = useParams();
@@ -16,10 +16,10 @@ function PostDetailPage() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const { post } = await api.getPost(id);
+        const post = await api.getPost(id);
         setPost(post);
       } catch (error) {
-        console.error('Error al cargar el post:', error);
+        console.error("Error al cargar el post:", error);
       } finally {
         setLoading(false);
       }
@@ -29,16 +29,17 @@ function PostDetailPage() {
   }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres borrar este post?')) return;
+    if (!window.confirm("¿Estás seguro de que quieres borrar este post?"))
+      return;
     await api.deletePost(id);
-    navigate('/');
+    navigate("/");
   };
 
   // Al crear un comentario, la API devuelve el comentario SIN author poblado.
   // Construimos el objeto author manualmente desde el usuario del contexto
   // para que CommentItem pueda renderizar username y detectar ownership.
   const handleCommentCreated = async (data) => {
-    const { comment } = await api.createComment(id, data);
+    const comment = await api.createComment(id, data);
     const commentWithAuthor = {
       ...comment,
       author: { id: user.id, username: user.username },
@@ -74,15 +75,18 @@ function PostDetailPage() {
   }
 
   const isOwner = user?.id === post.author?.id;
-  const formattedDate = new Date(post.createdAt).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  const formattedDate = new Date(post.createdAt).toLocaleDateString("es-ES", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
 
   return (
     <PageLayout>
-      <Link to="/" className="text-sm text-indigo-600 hover:underline mb-4 inline-block">
+      <Link
+        to="/"
+        className="text-sm text-indigo-600 hover:underline mb-4 inline-block"
+      >
         ← Volver al inicio
       </Link>
 
@@ -107,7 +111,9 @@ function PostDetailPage() {
           )}
         </div>
 
-        <p className="text-slate-600 leading-relaxed mb-4 whitespace-pre-wrap">{post.body}</p>
+        <p className="text-slate-600 leading-relaxed mb-4 whitespace-pre-wrap">
+          {post.body}
+        </p>
 
         <div className="flex items-center gap-2 text-xs text-slate-400 border-t border-slate-100 pt-3">
           <span>@{post.author?.username}</span>
@@ -131,7 +137,9 @@ function PostDetailPage() {
               />
             ))
           ) : (
-            <p className="text-slate-400 text-sm py-2">Sin comentarios todavía.</p>
+            <p className="text-slate-400 text-sm py-2">
+              Sin comentarios todavía.
+            </p>
           )}
         </div>
 

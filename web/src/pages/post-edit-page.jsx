@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import { PageLayout } from '../components/layouts';
-import { PostForm } from '../components/posts';
-import * as api from '../services/api-service';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router";
+import { PageLayout } from "../components/layouts";
+import { PostForm } from "../components/posts";
+import * as api from "../services/api-service";
 
 function PostEditPage() {
   const { id } = useParams();
@@ -14,10 +14,10 @@ function PostEditPage() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const { post } = await api.getPost(id);
+        const post = await api.getPost(id);
         setDefaultValues({ title: post.title, body: post.body });
       } catch (error) {
-        console.error('Error al cargar el post para editar:', error);
+        console.error("Error al cargar el post para editar:", error);
       }
     };
 
@@ -31,7 +31,9 @@ function PostEditPage() {
 
   return (
     <PageLayout>
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Editar publicación</h1>
+      <h1 className="text-2xl font-bold text-slate-800 mb-6">
+        Editar publicación
+      </h1>
 
       {defaultValues ? (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">

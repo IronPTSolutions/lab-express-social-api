@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { PageLayout } from '../components/layouts';
-import { PostsList } from '../components/posts';
-import * as api from '../services/api-service';
+import { useState, useEffect } from "react";
+import { PageLayout } from "../components/layouts";
+import { PostsList } from "../components/posts";
+import * as api from "../services/api-service";
 
 function ProfilePage() {
   const [profile, setProfile] = useState(null);
@@ -10,10 +10,10 @@ function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { user } = await api.getProfile();
+        const user = await api.getProfile();
         setProfile(user);
       } catch (error) {
-        console.error('Error al cargar el perfil:', error);
+        console.error("Error al cargar el perfil:", error);
       } finally {
         setLoading(false);
       }
@@ -33,7 +33,9 @@ function ProfilePage() {
   if (!profile) {
     return (
       <PageLayout>
-        <p className="text-red-600 text-center py-8">No se pudo cargar el perfil.</p>
+        <p className="text-red-600 text-center py-8">
+          No se pudo cargar el perfil.
+        </p>
       </PageLayout>
     );
   }
@@ -41,7 +43,9 @@ function ProfilePage() {
   return (
     <PageLayout>
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-        <h1 className="text-2xl font-bold text-slate-800 mb-1">{profile.name}</h1>
+        <h1 className="text-2xl font-bold text-slate-800 mb-1">
+          {profile.name}
+        </h1>
         <p className="text-indigo-600 font-medium mb-1">@{profile.username}</p>
         <p className="text-slate-500 text-sm">{profile.email}</p>
       </div>

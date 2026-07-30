@@ -1,16 +1,15 @@
-import { Link, useNavigate } from 'react-router';
-import useAuth from '../contexts/auth-context';
-import { SignupForm } from '../components/auth';
-import * as api from '../services/api-service';
+import { Link, useNavigate } from "react-router";
+import useAuth from "../contexts/auth-context";
+import { SignupForm } from "../components/auth";
+import * as api from "../services/api-service";
 
 function SignupPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (data) => {
-    const { user } = await api.signup(data);
-    login(user);
-    navigate('/');
+    await api.signup(data);
+    navigate("/login");
   };
 
   return (
@@ -22,8 +21,11 @@ function SignupPage() {
         <SignupForm onSubmit={handleSubmit} />
 
         <p className="text-sm text-slate-500 text-center mt-6">
-          ¿Ya tienes cuenta?{' '}
-          <Link to="/login" className="text-indigo-600 hover:underline font-medium">
+          ¿Ya tienes cuenta?{" "}
+          <Link
+            to="/login"
+            className="text-indigo-600 hover:underline font-medium"
+          >
             Inicia sesión
           </Link>
         </p>

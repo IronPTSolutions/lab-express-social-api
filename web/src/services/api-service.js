@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { LS_USER_KEY } from '../contexts/auth-context';
+import axios from "axios";
+import { LS_USER_KEY } from "../contexts/auth-context";
 
 // axios.create() genera una instancia preconfigurada con baseURL y opciones comunes.
 // Así no repetimos la URL base ni las opciones en cada llamada a la API.
@@ -18,29 +18,29 @@ const http = axios.create({
 http.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const status = error.response?.status;
-    if (status === 401 && !window.location.pathname.includes('/login')) {
-      localStorage.removeItem(LS_USER_KEY);
-      window.location.replace('/login');
-    } else {
-      return Promise.reject(error);
+    if (error.status === 401 && location.pathname !== "/login") {
+      window.location = "/login";
     }
-  }
+
+    return Promise.reject(error);
+  },
 );
 
 // --- Auth ---
-export const login = (data) => http.post('/sessions', data);
-export const signup = (data) => http.post('/users', data);
-export const logout = () => http.delete('/sessions');
-export const getProfile = () => http.get('/users/me');
+export const login = (data) => http.post("/sessions", data);
+export const signup = (data) => http.post("/users", data);
+export const logout = () => http.delete("/sessions");
+export const getProfile = () => http.get("/users/me");
 
 // --- Posts ---
-export const listPosts = () => http.get('/posts');
+export const listPosts = () => http.get("/posts");
 export const getPost = (id) => http.get(`/posts/${id}`);
-export const createPost = (data) => http.post('/posts', data);
+export const createPost = (data) => http.post("/posts", data);
 export const updatePost = (id, data) => http.patch(`/posts/${id}`, data);
 export const deletePost = (id) => http.delete(`/posts/${id}`);
 
 // --- Comments ---
-export const createComment = (postId, data) => http.post(`/posts/${postId}/comments`, data);
-export const deleteComment = (postId, commentId) => http.delete(`/posts/${postId}/comments/${commentId}`);
+export const createComment = (postId, data) =>
+  http.post(`/posts/${postId}/comments`, data);
+export const deleteComment = (postId, commentId) =>
+  http.delete(`/posts/${postId}/comments/${commentId}`);
